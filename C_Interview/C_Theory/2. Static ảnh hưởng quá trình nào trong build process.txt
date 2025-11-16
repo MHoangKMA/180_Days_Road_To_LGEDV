@@ -1,0 +1,75 @@
+✅ Static ảnh hưởng ở giai đoạn nào?
+❌ 1. Preprocessor time — KHÔNG
+
+Preprocessor chỉ xử lý:
+
+#include
+
+#define
+
+macro
+
+xóa comment
+
+điều kiện #if
+
+➡ Từ khóa static không được preprocessor đụng đến.
+Nó là từ khóa của ngôn ngữ C, xử lý bởi compiler.
+
+✔ 2. Compile time — CÓ ẢNH HƯỞNG
+
+Ở giai đoạn compile time, compiler quyết định:
+
+Scope (phạm vi sử dụng tên)
+
+Storage class (class lưu trữ)
+
+Lifetime
+
+Biến sẽ nằm ở segment nào (data/bss vs stack)
+
+→ Từ khóa static thay đổi storage class của biến/hàm.
+
+Ví dụ:
+
+static int a;
+
+
+Compiler quyết định:
+
+A là internal (không phải external global)
+
+A phải được đặt vào BSS (vì không khởi tạo)
+
+→ Đây là quyết định của compiler.
+
+✔ 3. Linking time — CÓ ẢNH HƯỞNG
+
+Static (khi dùng ở global hoặc trước hàm) tạo ra:
+
+internal linkage (không cho file khác truy cập)
+
+Không sinh ra symbol exportable để linker thấy
+
+Ví dụ:
+
+static int x = 5;
+
+
+→ Symbol x không xuất hiện trong symbol table dạng external,
+→ linker không thể kết nối nó với file khác.
+
+Do đó static ảnh hưởng trực tiếp đến quá trình linking.
+
+❌ 4. Run time — KHÔNG
+
+Static không phải cơ chế runtime.
+Nó không thay đổi gì khi chương trình đang chạy.
+
+Chỉ có 1 điều nhỏ liên quan run-time:
+
+Giá trị của static variable được giữ lại suốt chương trình
+
+Nhưng điều này đã được quyết định từ compile time, không phải runtime.
+
+➡ static không được xử lý ở runtime, runtime chỉ dùng vùng nhớ đã cấp.
