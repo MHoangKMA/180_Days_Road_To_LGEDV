@@ -1,0 +1,83 @@
+"What is output of the code:
+
+#include <stdio.h> 
+int main()
+{
+    float a        = 16777217;
+    unsigned int b = 16777216;
+ 
+    if (a > b)  printf(""a > b\n"");
+    if (a < b)  printf(""a < b\n"");
+    if (a == b) printf(""a == b\n"");
+ 
+    return 0;
+}
+
+==> a == B
+
+Theo chuẩn IEEE - 754 single precéion (float 32 bit), float chỉ biểu diễn chính xác đến 2^24, tức các giá trị lớn hơn số này khi khởi tạo cho biến có kiểu dữ liệu là float sẽ bị làm tròn về 2 ^ 24.
+
+Tương tự với double, chỉ biểu diễn chính xác số nguyên đến 2^53
+
+==================================================
+double x = 9007199254740993;   // 2^53 + 1
+double y = 9007199254740992;   // 2^53
+
+if (x == y) printf("equal\n");
+
+==================================================
+#include <stdio.h>
+
+int main() {
+    float a = 1000000000;
+    float b = a + 1;
+
+    if (a == b)
+        printf("equal\n");   // in ra "equal"
+    else
+        printf("not equal\n");
+}
+
+
+
+Vì float độ phân giải ở mức 1e9 là ~128→ +1 không thay đổi giá trị
+
+Nghĩa là tại giá trị ~1e9, float chỉ nhận các bước nhảy 128 đơn vị trở lên
+Khi bạn cộng 1 vào 1e9, 1 quá nhỏ để float lưu chính xác, nên kết quả b = 1e9 luôn.
+
+==================================================
+float x = 1000000000;
+float y = 999999999;
+
+printf("%f\n", x - y);
+
+🔹 Phân tích:
+
+x và y là float lớn (~1e9).
+
+Độ phân giải float tại ~1e9 là ~128 (như ý 3).
+
+Nghĩa là float không thể biểu diễn chính xác các số nguyên cách nhau < 128.
+
+→ Giá trị y = 999999999 sẽ bị làm tròn thành 1000000000 trong float.
+
+Khi trừ x - y:
+
+
+Mặc dù trong toán học lý thuyết x - y = 1, nhưng float không đủ chính xác → kết quả là 0.0.
+
+==================================================
+Độ chính xác (precision) của float
+
+float trong C là IEEE 754 single-precision (32-bit):
+
+1 bit sign
+
+8 bit exponent
+
+23 bit mantissa (fraction)
+
+Mantissa 23 bit → có thể lưu tất cả các số nguyên liên tiếp tới 2²³ = 8,388,608 một cách chính xác 100%.
+
+Với exponent tăng lên (số lớn hơn), khoảng cách giữa các số nguyên liên tiếp cũng tăng lên, vì float dùng normalized scientific notation.
+
