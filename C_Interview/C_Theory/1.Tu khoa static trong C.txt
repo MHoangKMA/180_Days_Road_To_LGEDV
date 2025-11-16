@@ -1,0 +1,130 @@
+Format:
+1. Khái niệm
+2. Phân loại, so sánh các loại, vì sao lại có đặc điểm đó, đặc điểm đó đến từ đâu?
+3. Tác dụng? Khi nào thì dùng?
+
+Khái niệm: Static là 1 từ khóa trong C nó được với cả biến và hàm. 
++ Khi dùng với Biến thì biến đó sẽ được gọi là biến tĩnh
++ Khi dùng với Hàm thì hàm đó được gọi là hàm tĩnh
+
+Phân loại: Static có thể dùng được với cả biến local và global
++ Local static variable
++ Global Static variable
+
+Đặc điểm:
+
+- ========================Đối với local Static variable===================================: 
++ Scope (phạm vi): thì nó cũng vẫn giống như biến Normal local là bị giới hạn phạm vi trong 1 hàm hay 1 block code { }
++ Lifetime: Nó có sự khác biệt so với biến Normal local là giá trị trong biến local static variable thì sẽ được bảo toàn cho đến khi chương trình đó kết thúc. Hay nói cách khác local static đang được nâng tầm gần giống như 1 biến global về mặt lưu trữ giá trị.
+
+-> Tại sao lại có thể lưu trữ giá trị được như vậy?
+ Lí do: Biến local bình thường thì sẽ được allocate vào stack segment. Nhưng đối với local static variable thì nó sẽ được allocate vào data/bss tùy thuộc vào trạng thái khởi tạo của nó.
+
+Ví dụ: int a; int b = 0;                        ---> allocate BSS
+       int c = 10; (init giá trị cụ thể khác 0) ---> allocate Data
+	
+Đặc điểm của vùng Data sengment là: 
++Chúng có thể cho phép truy cập vào vùng nhớ này để Read/Write giá trị
++Giá trị bên trong vùng nhớ này sẽ được tồn tại cho đến khi chương trình kết thúc
+---> CHính vì vậy biến global mới có đặc điểm như trên.
+
+Đặc điểm của vùng BSS sengment là: 
++Chúng có thể cho phép truy cập vào vùng nhớ này để Read/Write giá trị
++Giá trị bên trong vùng nhớ này sẽ được tồn tại cho đến khi chương trình kết thúc
+---> CHính vì vậy biến global mới có đặc điểm như trên
+
++ Đối với biến normal local: thì chúng sẽ được phân bổ vào Stack segment 
+
+Đặc điểm Stack segment này: + Cũng có thể cho phép truy cập Read/Write giá trị
+                            + Tuy nhiên giá trị được lưu trữ trong vùng nhớ này sẽ tự được giải phóng và bị thu hồi vùng nhớ sau khi mà biến đó đã được gọi
+							. Đây là cơ chế của vùng nhớ Stack
+--> Chính vì vậy biến local mang đặc điểm của vùng nhớ Stack. 
+
+
+- ========================Đối với Global Static variable===================================: 
++ Scope (phạm vi): Biến global Static varibale nó là biến này có thể được bởi các hàm trong cùng file .c mà nó được định nghĩa. Không thể được gọi từ file khác. 
++Lifetime: Giá trị được lưu trữ bên trong global static variable cũng giống như biến normal global tức là giá trị sẽ được bảo toàn cho đến khi chương trình kết thúc.
+
+- Điểm nhau giữa normal global và global static variable là về mặt phạm vi gọi trong các file
++ Normal golbal: thì có thể được gọi trong cả các file khác bằng cách dùng từ khóa extern 
++ Global static varible: thì nó chỉ có thể được gọi ở file mà nó được định nghĩa và không thể dùng với extern 
+
+Tại sao mà biến global static varaible lại bị giới hạn phạm vi như vậy? 
+-> Trong quá trình biên dịch, mỗi file .c sẽ được compiler biến dịch thành file .o tương ứng. Sau đó, linker sẽ linking các file .o này thành một file hoàn chỉnh (.elf, .exe,..). Trong giai đó có 3 loại linkage tức chỉ mức độ nhìn thấy visibility của biến hoặc hàm giữa các file trong chương trình. Hay nói cách khác linkage cho biến biến hoặc hàm có thể được dùng ở file khác hay chỉ trong file hiện tại.
+
++ Khi khai báo biến normal global thì mặc định biến đó sẽ mang kiểu liên kết external linkage và trong quá trình linker thì nó sẽ được linking với các file .o nếu biến hoặc hàm có được dùng ở file khác
++ Tuy nhiên đối với Static global varaible thì lúc này biến này sẽ thuộc kiểu linkage internal và trong quá trình linker thì nó sẽ không được linking với các file khác. Chính vì vậy, mà biến global static varaible chỉ có thể sử dụng được tại nơi mà nó được định nghĩa. 
+Static khi dùng ở mức global không ảnh hưởng đến lifetime, chỉ thay đổi linkage từ external → internal
+
+📌 Lifetime phụ thuộc vào nơi trữ trong bộ nhớ (data/bss)
+📌 Scope phụ thuộc vào nơi định nghĩa trong code (block)
+
+Tác dụng: 
++ Bảo vệ 1 biến hay 1 hàm không bị sử dụng bởi file khác hay người khác.
++ Tránh được những lỗi sai logic khi liên tục sử dụng giá trị của 1 biến ở nhiều file khác nhau. Thì lúc nếu có xảy ra sai logic thì cũng dễ debug. 
++ Giảm xung đột tên (name conflict)
+Khi nhiều file có biến tên giống nhau, dùng static đảm bảo linker không lẫn.
+
+Khi nào thì dùng:
++ Do người lập trình muốn hay không muốn sử dụng từ static vào 1 biến hay hàm.
+ 
+✔ Khi dùng local static
+
+Muốn biến giữ giá trị giữa các lần gọi hàm
+
+Dùng cho counter, state machine, debouncing, đếm số gọi hàm, ...
+
+✔ Khi dùng global static
+
+Muốn ẩn dữ liệu trong 1 file (giống private trong OOP)
+
+Tránh nhiều file truy cập lung tung
+
+Giảm sự phụ thuộc giữa file
+
+Tránh xung đột tên
+
+Example:
+
+#include <stdio.h>
+
+void countFunctionCall()
+{
+	static int count = 0;
+	count++;
+	printf("Function called %d time\n", count);
+}
+
+int main()
+{
+	countFunctionCall();
+	countFunctionCall();
+	countFunctionCall()
+	return 0;
+}
+
+
+Example:
+
+A.c
+
+#include<stdio.h>
+
+static int secretValue = 2025;
+
+void printSecret()
+{
+	printf("Secret = %d", secretValue);
+}
+
+B.c
+
+#include<stdio.h>
+
+void printSecret();
+
+int main() 
+{
+    printSecret();   
+    return 0;
+}
