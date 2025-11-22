@@ -2,9 +2,7 @@
 #include <math.h>
 
 #define RANGMIN 0
-#define RANGMAX 1000000
-
-
+#define RANGMAX 1000000LL
 
 void solveQuadratic(double a, double b, double c, int *n, double x[2])
 {

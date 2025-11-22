@@ -1,6 +1,6 @@
 #include <stdio.h>
 #define RANGMIN 0
-#define RANGMAX 1000000
+#define RANGMAX 1000000LL
 
 long long years, months,days, remaining_days;
 

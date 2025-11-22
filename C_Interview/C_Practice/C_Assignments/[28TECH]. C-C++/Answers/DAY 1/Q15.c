@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#define RANG_MAX (1 * 1e18)
-#define RANG_MIN (-1 * 1e18)
+#define RANG_MAX 100000000000000000000000LL
+#define RANG_MIN -100000000000000000000000LL
 
 int main()
 {

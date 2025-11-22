@@ -1,5 +1,5 @@
 #include <stdio.h>
-#define RANG_MAX (1 * 1e8)
+#define RANG_MAX 100000000LL
 #define RANG_MIN 1
 
 
